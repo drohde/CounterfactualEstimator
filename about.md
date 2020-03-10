@@ -9,7 +9,7 @@ This site should in the future contain blogposts about math and datascience. Cur
 
 ## Testing support for latex with mathjax
 
-Here is a blogpost explaining how to use mathjax to support latex in a jekyll blog:  [Link](http://haixing-hu.github.io/programming/2013/09/20/how-to-use-mathjax-in-jekyll-generated-github-pages/) .
+Here is a blogpost explaining how to use mathjax to support latex in a jekyll blog:  [Link]( http://benlansdell.github.io/computing/mathjax )
 
 ### Testing an equation
 
