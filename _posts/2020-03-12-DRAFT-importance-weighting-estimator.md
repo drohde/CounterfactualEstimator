@@ -1,0 +1,165 @@
+---
+layout: post
+title:  "Counterfactual reasoning with the Importance Weighting Estimator"
+date:   2020-03-10 12:19:09 +0100
+categories: jekyll update
+---
+{% include mathjax_support %}
+
+# Counterfactual reasoning with the Importance Weighting Estimator
+
+Let's assume we have been collecting some dataset of our contextual bandit, using one policy $\pi_0$. 
+We thus have a dataset $(x_i, a_i, r_i)$ where:
+
+* $x_i$ are iid samples of the state X.
+* $a_i$ is a sample from $\pi_0$ on state $x_i$
+* $r_i$ is a sample of the reward when the state is $x_i$ and the action $a_i$
+
+![contextual bandit datset](/assets/images/reco_problem/bandit_dataset2.png){:class="img-responsive"}
+
+
+And let's say we have a new algorithm, providing a new policy $\pi_{test}$. We would like to know how it performs. More precisely, we would like to know which total reward we would have got, if we had used $\pi_{test}$ instead of $\pi_0$. 
+
+Can we do that only from our offline data ? 
+
+The surprising answer is 'Yes, we can', under some rather mild assumptions. More precisely, we will construct an unbiased estimate of how many clicks we would have got with test policy. 
+
+Let's already state those assumptions:
+- we are in a 'contextual bandit' setting. See the previous post for more details, but this mostly means that what's happening at a timestep $i$ does not depend on the other timesteps. 
+- the policy $\pi_0$ use to collect data must be stochastic and explore all the actions: and that for any state $x$ and action $a$, $\pi_0$ should play $a$ in state $x$ with a non $0$ probability.
+
+
+Under those hypothesis, we can estimate the total reward we would have got when using $\pi_{test}$ with the 'Importance sampling estimator' (IPS), defined as follow:
+
+$$ IPS := \sum_\limits{ i \in {1...n} } \frac{ \pi_{test}(x_i,a_i) }{ \pi_0(x_i,a_i) } r_i $$
+
+Let's already try to interpret this formula:
+- we are counting the clicks $r_i$
+- each click is reweighted by the ratio $\frac{ \pi_{test}(x_i,a_i) }{ \pi_0(x_i,a_i) }$
+
+### A simplified example
+
+To get an intuition on why this formula would work, lets look at a simplified example, with only one single state $x_0$, and two actions, 'red' and 'green'
+
+Let's assume we collected some data with the following policy:
+* $\pi_0(red,x_0) = 0.8$
+* $\pi_0(green,x_0) = 0.2$
+
+And that after applying this policy to 10000 users, we got a total of 1000 clicks after the cases when red was chosen, and 300 after green.
+
+Let's say we would like to test this new policy: 
+* $\pi_{test}(red,x_0) = 0.2$
+* $\pi_{test}(green,x_0) = 0.8$
+
+Can we tell which results to expect if we follow this new policy ?
+
+![simple example](/assets/images/reco_problem/iw_simple_example.png){:class="img-responsive"}
+
+As the diagram suggests, the test policy chooses green $4$ times more often than $\pi_0$, so we may expect $4$ time more clicks on green. It also choose red 4 time less often so we should expect 4 times less clicks on red.
+
+The final answer is then:
+ $$ Clicks_{green} \times \frac{ \pi_{test}(green) } { \pi_{0}(green) } +  Clicks_{red} \times \frac{ \pi_{test}(red) } { \pi_{0}(red) }  = 300 \times \frac{ 0.8 }{0.2}  +  1000 \times \frac{ 0.2 }{0.8} = 1450   $$ 
+
+We can see that the ratios $ \frac{ \pi_{test}(green) } { \pi_{0}(green) } = 4 $ and $ \frac{ \pi_{test}(red) } { \pi_{0}(red) } = 0.25 $ are quite intuitive to apply here, and that the final formula is exactly the $IPS$ estimator has defined above.
+
+
+Note that this is correct because the choice of 'red' or 'green' were made **at random, following a known policy** $\pi_0$. It would **not** be correct anymore if the choice of red / green was depending of some other variables, and the "80% red, 20% green" was only the average on different users. In this case, such a reasoning would suffer from [Simpson's paradox](https://en.wikipedia.org/wiki/Simpson%27s_paradox)
+ such as  data on the user. We would indeed get a 
+ does not depend on any other variable we did not observe, but really followed the specified policy. 
+
+#### An unbiased estimator
+
+We just estimated, from the data in this example, that using the $\pi_{test}$ policy we would have got 1450 clicks. Does it means that we would observe _exactly_ 1450 clicks if we had collected the data with $\pi_{test}$ ? Certainly not. This number of clicks with the test policy is a random variable, and we have only an estimator of its average.
+We will explain further why it is _unbiased_ , which means the following:
+if we replayed infinitely many times the experiment we just did, which is:
+- collect some data with $\pi_0$
+- compute the estimator $ Clicks_{green} \times \frac{ \pi_{test}(green) } { \pi_{0}(green) } +  Clicks_{red} \times \frac{ \pi_{test}(red) } { \pi_{0}(red) }$ on those data
+
+We would get, _on average on those experiments_,  the average number of clicks we would get with $\pi_{test}$
+
+We will explain later how to get some confidence bounds around our estimated value.
+
+
+### Back to the general problem
+
+Previous example suggests an interpretation for the weights $\frac{ \pi_{test}(x_i,a_i) }{ \pi_0(x_i,a_i) }$
+They represent _'how more likely' is action_ $a$ with $\pi_{test}$ than with $\pi_0$ in the context $x$. 
+We will name this ratio the 'importance weight' and note it $w$:
+
+$$ w_i := w(a_i,x_i) := \frac{ \pi_{test}(x_i,a_i) }{ \pi_0(x_i,a_i) } $$
+
+In the general case of course, the users may be all different, and the policy $\pi_0$ is allowed to depend on the user. Why don't we suffer from a Simpson's like paradox ?
+To understand that, let's first wonder how many users we need in the previous example to get an unbiased estimator. It is obvious that we do need many users to get a low variance estimator, but it is unbiased irrespective of the number of users. In particular, it is unbiased even when there is a single user !
+So in the general case, we get on each user an unbiased (but high variance) estimator of what would happen when using test policy. By summing those estimator on all users, it is still unbiased (for the population of users), and the relative variance (hopefully, more on that later) goes down. 
+
+#### Proof of unbiasedness
+
+Let's formalize a bit to prove that $$ ips := \sum_\limits{ i \in {1...n} } w(a_i,x_i) \times  r_i $$ is an unbiased estimator of the reward under the test policy.
+
+To prove that it is unbiased, we need to compute its expectation. Indeed, the $ips$ value we measure on a dataset is the realization of a random variable, depending on the randomness of:
+- the states $X_i$
+- the actions $A_i$
+- the rewards $R_i$
+
+In other word, we have one sample of the random variable $$ IPS =  $$ \sum_\limits{ i \in {1...n} }  w(A_i,X_i) \times R_i $$
+
+We would like to prove that the expectation of this random variable is exactly 'the expected number of clicks when using $\pi_{test}$'
+So let's write its expectation:
+
+$$ \mathbb{E}(IPS) =  $$ \sum_\limits{ i \in {1...n} } \mathbb{E} (  w(A_i,X_i) \times R_i )  $$
+
+since all samples are identically distributed,
+
+$$ \mathbb{E}(IPS) =   n \times \mathbb{E} (  w(A_1,X_1) \times R_1 )  $$
+
+we can now decompose the expectation on the different random variable:
+
+$$ \mathbb{E}(IPS) =   n \times \sum_\limits{x}  Proba(X = x)  \mathbb{E}_{A \sim \pi_0(X)} ( w(A_1,X_1) \times \mathbb{E}_R( R_1  | A_1 ,X_1  ) )  $$
+
+where $Proba(X = x)$ is the (unknown ! ) probability of observing a user in state $x$
+
+Writing the definition of $\mathbb{E}_{A \sim \pi_0(X)}$
+
+$$ \mathbb{E}(IPS) =   n \times \sum_\limits{x}  Proba(X = x) \sum_\limits{ a \in actionsSet }   \pi_0(a,x) \times w(a,x) \times \mathbb{E}_R( R_1  | a , x  )  $$
+
+(because $ \pi_0(a,x)$ is by definition the probability of observing action $a$ here)
+
+We can now note that $ \pi_0(a,x) \times w(a,x) = \pi_0(a,x) \times \frac{\pi_{test}(a,x)}{\pi_0(a,x)} = \pi_{test}(a,x)$  (That's where we need the hypothesis "all actions have a non zero probability under $\pi_0$" to avoid a division by 0.
+Thus:	
+
+$$ \mathbb{E}(IPS) = n \times \sum_\limits{x}  Proba(X = x) \sum_\limits{ a \in actionsSet }   \pi_{test}(a,x) \times \mathbb{E}_R( R_1  | a , x  )  $$
+
+And we recognize here an expectation when $A$ is following $\pi_{test}$:
+
+$$ \mathbb{E}(IPS) = n \times \sum_\limits{x}  Proba(X = x) \mathbb{E}_{A \sim \pi_{test}(x)} (R) $$
+
+Which is exactly the expected number of clicks when using policy $\pi_{test}$
+
+
+
+### Computing this estimator on your dataset
+
+There are several requirement to be able to compute this estimator on your dataset:
+- the data must be collected with a randomized policy $\pi_0$
+- You should log or recompute the probability  $\pi_0(a,x)$ of choosing action $a$ for  user $x$. This is usually not a problem is you designed the policy $\pi_0$ 
+- You should be able to compute the probability $\pi_{test}(a,x)$. This may be a bigger problem, because it usually means you need to know the full set of actions available on a user $x$.
+
+![contextual bandit datset](/assets/images/reco_problem/bandit_dataset3.png){:class="img-responsive"}
+
+(Note that in our example the list of possible actions depends on the context. This is Ok, the only restriction is that $\pi_{test}$ can only use the actions from the same list)
+
+
+#### It means I should randomized my data collection policy $\pi_0$. Why should I do that ? Wouldn't it kill the performances of my system ?
+
+Randomized does not mean it should be uniformly random ! It is totally Ok to have a policy assigning large probabilities to actions you assume are good, and a tiny one to 'bad' actions. 
+
+And there are several other reasons why it can be a good idea to have a randomized policy:
+- It will bring some diversity to the users. If you make several times a recomendation to the same user, randomizing if a very simple but efficient way to avoid showing the same user always the same crappy recommendation.
+- And it will bring diversity to the models trained on the collected dataset, enabling some exploration of new actions.
+
+
+### So we have an unbiased estimator. But is it low variance ?
+
+That's a pretty good question, and unfortunately in many cases the answer is 'No'. In the next post, we will explain why, and analyze a common method to limit the variance.
+
+
