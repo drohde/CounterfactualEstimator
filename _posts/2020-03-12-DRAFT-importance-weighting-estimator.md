@@ -31,11 +31,12 @@ Let's already state those assumptions:
 
 Under those hypothesis, we can estimate the total reward we would have got when using $\pi_{test}$ with the 'Importance sampling estimator' (IPS), defined as follow:
 
-$$ IPS := \sum_\limits{ i \in {1...n} } \frac{ \pi_{test}(x_i,a_i) }{ \pi_0(x_i,a_i) } r_i $$
+$$ ips :=  \frac{1}{n} \times \sum_\limits{ i \in {1...n} } \frac{ \pi_{test}(x_i,a_i) }{ \pi_0(x_i,a_i) } r_i $$
 
 Let's already try to interpret this formula:
 - we are counting the clicks $r_i$
 - each click is reweighted by the ratio $\frac{ \pi_{test}(x_i,a_i) }{ \pi_0(x_i,a_i) }$
+- and we divide by $n$ to get a 'ratio of clicks per user'
 
 ### A simplified example
 
@@ -94,7 +95,7 @@ So in the general case, we get on each user an unbiased (but high variance) esti
 
 #### Proof of unbiasedness
 
-Let's formalize a bit to prove that $$ ips := \sum_\limits{ i \in {1...n} } w(a_i,x_i) \times  r_i $$ is an unbiased estimator of the reward under the test policy.
+Let's formalize a bit to prove that $$ ips := \frac{1}{n} \times \sum_\limits{ i \in {1...n} } w(a_i,x_i) \times  r_i $$ is an unbiased estimator of the reward under the test policy.
 
 To prove that it is unbiased, we need to compute its expectation. Indeed, the $ips$ value we measure on a dataset is the realization of a random variable, depending on the randomness of:
 - the states $X_i$
@@ -106,32 +107,32 @@ In other word, we have one sample of the random variable $$ IPS =  $$ \sum_\limi
 We would like to prove that the expectation of this random variable is exactly 'the expected number of clicks when using $\pi_{test}$'
 So let's write its expectation:
 
-$$ \mathbb{E}(IPS) =  $$ \sum_\limits{ i \in {1...n} } \mathbb{E} (  w(A_i,X_i) \times R_i )  $$
+$$ \mathbb{E}(IPS) = \frac{1}{n} \times $$ \sum_\limits{ i \in {1...n} } \mathbb{E} (  w(A_i,X_i) \times R_i )  $$
 
 since all samples are identically distributed,
 
-$$ \mathbb{E}(IPS) =   n \times \mathbb{E} (  w(A_1,X_1) \times R_1 )  $$
+$$ \mathbb{E}(IPS) =   \mathbb{E} (  w(A_1,X_1) \times R_1 )  $$
 
 we can now decompose the expectation on the different random variable:
 
-$$ \mathbb{E}(IPS) =   n \times \sum_\limits{x}  Proba(X = x)  \mathbb{E}_{A \sim \pi_0(X)} ( w(A_1,X_1) \times \mathbb{E}_R( R_1  | A_1 ,X_1  ) )  $$
+$$ \mathbb{E}(IPS) =   \sum_\limits{x}  Proba(X = x)  \mathbb{E}_{A \sim \pi_0(X)} ( w(A_1,X_1) \times \mathbb{E}_R( R_1  | A_1 ,X_1  ) )  $$
 
 where $Proba(X = x)$ is the (unknown ! ) probability of observing a user in state $x$
 
 Writing the definition of $\mathbb{E}_{A \sim \pi_0(X)}$
 
-$$ \mathbb{E}(IPS) =   n \times \sum_\limits{x}  Proba(X = x) \sum_\limits{ a \in actionsSet }   \pi_0(a,x) \times w(a,x) \times \mathbb{E}_R( R_1  | a , x  )  $$
+$$ \mathbb{E}(IPS) =    \sum_\limits{x}  Proba(X = x) \sum_\limits{ a \in actionsSet }   \pi_0(a,x) \times w(a,x) \times \mathbb{E}_R( R_1  | a , x  )  $$
 
 (because $ \pi_0(a,x)$ is by definition the probability of observing action $a$ here)
 
 We can now note that $ \pi_0(a,x) \times w(a,x) = \pi_0(a,x) \times \frac{\pi_{test}(a,x)}{\pi_0(a,x)} = \pi_{test}(a,x)$  (That's where we need the hypothesis "all actions have a non zero probability under $\pi_0$" to avoid a division by 0.
 Thus:	
 
-$$ \mathbb{E}(IPS) = n \times \sum_\limits{x}  Proba(X = x) \sum_\limits{ a \in actionsSet }   \pi_{test}(a,x) \times \mathbb{E}_R( R_1  | a , x  )  $$
+$$ \mathbb{E}(IPS) = \sum_\limits{x}  Proba(X = x) \sum_\limits{ a \in actionsSet }   \pi_{test}(a,x) \times \mathbb{E}_R( R_1  | a , x  )  $$
 
 And we recognize here an expectation when $A$ is following $\pi_{test}$:
 
-$$ \mathbb{E}(IPS) = n \times \sum_\limits{x}  Proba(X = x) \mathbb{E}_{A \sim \pi_{test}(x)} (R) $$
+$$ \mathbb{E}(IPS) =  \sum_\limits{x}  Proba(X = x) \mathbb{E}_{A \sim \pi_{test}(x)} (R) $$
 
 Which is exactly the expected number of clicks when using policy $\pi_{test}$
 
