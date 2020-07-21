@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: none
 title: Counterfactual estimator
 subblog: nonesofar
 lang: fr
