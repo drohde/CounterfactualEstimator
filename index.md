@@ -1,6 +1,17 @@
 ---
-layout: home
-title: Home
+layout: default
+title: Counterfactual estimator
+subblog: nonesofar
+lang: fr
 ---
 
-Coming soon, a serie of blog posts describing importance sampling estimator, and some tricks (capping, normalization) to make it usable in practice.
+Coming soon, some posts describing the counterfactual estimator and its usage and limitations for the recommendation problem.
+
+
+
+
+
+
+
+
+

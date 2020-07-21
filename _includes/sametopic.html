@@ -1,0 +1,25 @@
+
+ {%- if page.topic and page.subblog  -%}
+<nav class="site-nav">
+<h1>
+{{page.topic}}
+<div class="trigger">
+
+  {%- for collection in site.collections -%}
+    {%- assign name = collection.label -%}
+
+    {%- for x in site.[name] -%}   
+      {%- if x.topic and  x.subblog  -%}
+		  {%- if x.topic == page.topic  
+		  and  x.subblog == page.subblog  -%}
+	  
+              <a class="page-link" href="{{ x.url | relative_url }}">{{ x.title | escape }}</a>
+            {%- endif -%}
+            {%- endif -%}
+          {%- endfor -%}
+          {%- endfor -%}
+        </div>
+        </h1>
+        </nav>
+
+            {%- endif -%}

@@ -1,8 +1,9 @@
 ---
 layout: post
-title: "beyond the capped estimator"
-date: 2020-03-10 12:19:09 +0100
+title: "Beyond the capped estimator"
+date: 2020-03-25 12:19:09 +0100
 categories: jekyll update
+subblog: counterfactual
 ---
 {% include mathjax_support %}
 
@@ -13,18 +14,20 @@ In the previous post:
 - we concluded that when $\pi_{test}$ is too far from $\pi_0$, there is no way to build a low variance unbiased estimator, because we just did not collect enough samples of what happens after the actions favored by $\pi_{test}$.
 
 In this post, we will propose some idea to build a low variance estimator with an 'acceptable' bias,
-and introduce the "pointwise capped normalised" estimator defined in [Offline  A/B  Testing  for  Recommender  Systems](https://arxiv.org/abs/1801.07030) and some possible variants.
+and introduce the "pointwise capped normalized" estimator defined in [Offline  A/B  Testing  for  Recommender  Systems](https://arxiv.org/abs/1801.07030) and some possible variants.
 
 
 # Two ideas to go further
 
 We observed that we cannot get a low variance unbiased estimator for what happens when applying $\pi_{test}$, because we have not enough data on some of the actions it selects. So what we do ? We would like to propose two view points here:
  - we can make an hypothesis on the average reward of those unobserved actions
- - or we can replace $\pi_{test}$ by an approximate policy $\pi_{test'}$ which should be as similar to $\pi_{test}$ as possible while staying close enough from $\pi_0$ to have a low importance weights.
+ - or we can replace $\pi_{test}$ by an approximate policy $\pi_{test'}$ which should be as similar to $\pi_{test}$ as possible while staying close enough from $\pi_0$ to keep low importance weights.
  
 Interestingly enough, both ideas may lead to the same estimator.
 
 ## An example
+
+Before jumping into the equations, let's first look at a simple example to show how we can apply those ideas.
 
 |              | Action $a_1$ | Action $a_2$ | Action $a_3$|
 | $\pi_0$      | 0.8 | 0.2 | 0.00000001 |
@@ -33,10 +36,11 @@ Interestingly enough, both ideas may lead to the same estimator.
 |Average reward on observed data | 0.05 | 0.055 | Unobserved ! |
 
 
-The action $a_3$ clearly would certainly make the variance too high.
+The action $a_3$ clearly would make the variance too high.
 Instead of capping we could:
 - make an hypothesis one the average reward of action $a_3$. Looking at the other actions, maybe a reasonable guess would be around $0.05$ ?
-- or we could define a polcicy $\pi_{test'}$ which looks like $\pi_{test}$  but avoids the action $a_3$
+- or we could define a policy $\pi_{test'}$ which looks like $\pi_{test}$  but avoids the action $a_3$
+
 |              | Action $a_1$ | Action $a_2$ | Action $a_3$|
 |$\pi_{test'}$  | 0.11 | 0.89 | 0 |
 
@@ -63,13 +67,13 @@ _Using the capped estimator is therefore equivalent to approximating the reward 
 
 Now, let's assume instead that we would like to approximate average reward of the same actions (still those with $w>100$) not by 0 but by some function $f(x,a)$ instead.
 
-We can decompose expected reward under $\pi_{test}$ has:
-- expected reward from palying non capped actions. This is the part estimated by capped $IPS$
-- plus expected reward from playing non capped actions, $\sum_{a} \pi_{test}(a,x) f(a,x) )$
+We can decompose expected reward under $\pi_{test}$ as:
+- expected reward from playing non capped actions. This is the part estimated by capped $IPS$
+- plus expected reward from playing capped actions, $\sum_\limits{a \| w(a,x) > 100   } \pi_{test}(a,x) f(a,x) )$
 
 We can then correct the capped $IPS$ by adding this additional term:
 
-$$\frac{1}{n} \times  \sum_\limits{ i \in {1...n} } ( W_i \times 1_{ W_i < 100 }  \times  R_i  + \sum_{a} \pi_{test}(a,x_i) f(a,x_i) ) $$
+$$\frac{1}{n} \times  \sum_\limits{ i \in {1...n} } ( W_i \times 1_{ W_i < 100 }  \times  R_i  + \sum_\limits{a \| w(a,x) > 100   } \pi_{test}(a,x_i) f(a,x_i) ) $$
 
 Let's see now some possible hypothesis we could use.
 
@@ -77,7 +81,7 @@ Let's see now some possible hypothesis we could use.
 
 In a recommender system, the set of actions proposed in a context $x$ typically comes from several heuristics (collaborative filtering, bestofs,...) which are tuned to provide at least 'reasonable' actions.
 As a result, the expected reward $\mathbb{E}(R |X=x,A=a)$ in a context $x$ after action $a$ does not vary that much with $a$. 
-On the other hand it may vary by several orders of magnitude with context $x$. So we might write, for the less explored actions $\mathbb{E}(R(x,a)) \approx \mathbb{E}(R(x))  $. \\
+On the other hand it may vary by several orders of magnitude with context $x$. So we might write, for the less explored actions: $\mathbb{E}(R(x,a)) \approx \mathbb{E}(R(x))  $. \\
 
 Since the reward $R$ is not exactly the same for each action, we need to be a bit more specific here: To define $\mathbb{E}(R(x))$, we need to specify which policy is used to collect the actions. So we propose two variations:
 
@@ -85,7 +89,7 @@ Since the reward $R$ is not exactly the same for each action, we need to be a bi
 - Approximate $\mathbb{E}(R(x,a_{unexplored}))$ by the expected reward on the explored actions chosen by $\pi_{test}$
 
 We will detail the first option in section 3. Here we focus on the second option, and explain how it lead to the "pointwise capped normalized estimator".\\
-But first let's formalize it:
+But let's first formalize it:
 
 We would need to approximate the expected reward of an action when it is not explored enough by $\pi_0$, but happens more often with $\pi_{test}$. Those are exactly the actions where the importance weight $w$ is higher than the chosen threshold $c$. \\
 So we propose to approximate, for any context $x$:
@@ -119,7 +123,7 @@ Let $U$ an uniform random variable in interval $[0;1]$, independent from anythin
 This definition is motivated by the following equality:
 
 $$ \mathbb{E}( r_i \times min(w_i,c) ) = \mathbb{E}_{U, A \sim \pi_{test} }( R(A,x) \times( \mathbf{1}_{ W(A,x) > c \times U} ))$$ 
-In other words, the capped estimator is (in expectation) exactly what we get when we remove the 'unexplored' actions according to this precise definition.
+In other words, the capped estimator is (in expectation) what we get when we remove the 'unexplored' actions according to this precise definition.
 
 We can now rewrite our hypothesis: 
 
@@ -170,10 +174,10 @@ Now let's define $c' := \frac{c}{ \alpha} $
  
 
 #### Describing the policy $\pi_{test}'$
-We explained that the "pointwise capped normalised" estimator is actually the unbiased importance weighting estimator for a policy $\pi_{test'}$. Let's describe how to build this policy.
+We explained that the "pointwise capped normalised" estimator is actually the unbiased importance weighting estimator for a policy $\pi_{test'}$. Let's describe explicitly this policy.
+
 
 A sample of the approximate policy $\pi_{test}'$ can be obtain as follow:
-
   - sample one action $a$ using $\pi_{test}$
   - compute the importance weight $w(a) := \frac{\pi_{test}(a)}{\pi_p(a)} $
   - draw a random number $u$ uniform in $[0;1]$ 
@@ -236,4 +240,3 @@ The policy $\pi_{test}$ we test are usually not that far from $\pi_0$, which mea
 
 Overall, this mean that the difference in the hypothesis we used just change the result by a few %  on a few % of the dataset: overall, it is a second order effect which is usually far below the noise level.
 For all those reason, we ended using mostly this version of the estimator.
-

@@ -1,1 +1,10 @@
 theme: minima
+
+header_pages:
+  - about.md
+  - index.md
+  - counterfactual/index_counterfactual.md
+  
+collections:
+  enigma:
+    output: true

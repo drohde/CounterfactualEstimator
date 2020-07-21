@@ -1,6 +1,7 @@
 ---
 layout: default
 title: About
+subblog: counterfactual
 ---
 {% include mathjax_support %}
 # About page

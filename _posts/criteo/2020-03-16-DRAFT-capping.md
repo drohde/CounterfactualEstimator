@@ -3,6 +3,7 @@ layout: post
 title:  "Capping the importance sampling estimator"
 date:   2020-03-16 12:00:00 +0100
 categories: jekyll update
+subblog: counterfactual
 ---
 {% include mathjax_support %}
 
@@ -33,7 +34,7 @@ We can then write:
 
 (on the last step, we used  $R=R²$ because $R$ is binary, and dropped the second term which is typically much smaller)
 
-Variance of ips is more or less proportional to $ \mathbb{E}(W²) $ . How big is this ?
+Variance of $IPS$ is more or less proportional to $ \mathbb{E}(W²) $ . How big is this ?
 
 ### Variance of the importance weight
 
@@ -42,7 +43,7 @@ Let's note that the expectation of the importance weight is always $1$, so $ \ma
 $$ E(W) = \sum_\limits{a} \pi_0(a) w(a) = \sum_\limits{a} \pi_0(a) \frac{\pi_{test}(a)}{\pi_0(a)}  = \sum_\limits{a} \pi_{test}(a) = 1 $$ )
 
 
-It's variance however depends on how different are $\pi_0$ and $\pi_{test}$
+It's variance however depends on how different $\pi_0$ and $\pi_{test}$ are.
 
 Let's look at what happen on a few examples:
 
@@ -50,7 +51,7 @@ Let's look at what happen on a few examples:
 
 We can see on those examples that:
 - when $\pi_0$ is close to $\pi_{test}$ , the ratio  $\frac{\pi_{test}(a)}{\pi_0(a)}$  is always close from 1, and variance is low.
-- if $\pi_0$ and $\pi_{test}$ are very different, the weight is almost 0 with a large probality, but may take (with a low probability) some huge value. The variance is then driven by those outliers and is large.
+- if $\pi_0$ and $\pi_{test}$ are very different, the weight is almost 0 with a large probability, but may take (with a low probability) some huge value. The variance is then driven by those outliers and is large.
 
 The worst case happens when $\pi_{test}$ puts all the mass on the action less likely according to $\pi_0$.
 The $w$ is then either $\frac{1}{ min_a(\pi_0(a)}$ , with probability $ min_a(\pi_0(a)$ , or 0, and the variance is   $\frac{1}{ min_a(\pi_0(a)}$ -1 $
@@ -83,7 +84,7 @@ Let's also note that in the limit case, when the probability of an action follow
 
 When the variance is too large, the estimator is no longer useful in practice. Can we lower its variance ?
 
-Since the variance is driven by some outliers, we can lower the variance by removing those outliers. For example removing all samples where $w$ is above a threshold, or replacing $w$ by some maximum value when it the true value is higher.
+Since the variance is driven by some outliers, we can lower the variance by removing those outliers. For example removing all samples where $w$ is above a threshold, or replacing $w$ by some maximum value when the true value is higher.
 
  We can then defined the capped IPS estimator:
 
@@ -91,13 +92,13 @@ $$ capped IPS := \frac{1}{n} \times  \sum_\limits{ i \in {1...n} } \overline{W_i
 
 with:  $ \overline{W_i} $ defined either as:
  -  $ \overline{W_i} := min( W_i , c ) $     (capped weight)
- -  or $ \overline{W_i} :=  W_i \times \mathbb{1}_{ W_i < c  } $    (filtering out large weight)
+ -  or $ \overline{W_i} :=  W_i \times \mathbb{1}_{ W_i < c  } $    (filtering out large weights)
 
 and $c$ is the capping threshold.
 
 By choosing the capping threshold $c$ low enough (typically somewhere between 10 and 1000, depending on how much variance you are ready to accept), it is possible to get a variance low enough to use this estimator.
 
-... but of course, the capped estimator is no longer unbiased. hoice of the capping threshold $c$ is therefore a [bias-variance tradeoff](https://en.wikipedia.org/wiki/Bias%E2%80%93variance_tradeoff)
+... but of course, the capped estimator is no longer unbiased. Choice of the capping threshold $c$ is therefore a [bias-variance tradeoff](https://en.wikipedia.org/wiki/Bias%E2%80%93variance_tradeoff)
  Instead, since $\overline W \leq W $ (and $R \geq 0$ ), the capped IPS underestimate the outcome of the tested policy.
 This underestimation is all the more important when:
  - capping threshold $c$ is smaller
