@@ -16,7 +16,7 @@ We thus have a dataset $(x_i, a_i, r_i)$ where:
 * $a_i$ is a sample from $\pi_0$ on state $x_i$
 * $r_i$ is a sample of the reward when the state is $x_i$ and the action $a_i$
 
-![contextual bandit datset](/assets/images/reco_problem/bandit_dataset2.png){:class="img-responsive"}
+![contextual bandit dataset]({{site.repo_name}}/assets/images/reco_problem/bandit_dataset2.png){:class="img-responsive"}
 
 
 And let's say we have a new algorithm, providing a new policy $\pi_{test}$. We would like to know how it performs. More precisely, we would like to know which total reward we would have got, if we had used $\pi_{test}$ instead of $\pi_0$. 
@@ -54,7 +54,7 @@ Let's say we would like to test this new policy:
 
 Can we tell which results to expect if we follow this new policy ?
 
-![simple example](/assets/images/reco_problem/iw_simple_example.png){:class="img-responsive"}
+![simple example]({{site.repo_name}}/assets/images/reco_problem/iw_simple_example.png){:class="img-responsive"}
 
 As the diagram suggests, the test policy chooses green $4$ times more often than $\pi_0$, so we may expect $4$ time more clicks on green. It also choose red 4 time less often so we should expect 4 times less clicks on red.
 
@@ -150,7 +150,7 @@ There are several requirements to be able to compute this estimator on your data
 - You should log, or be able to recompute the probability  $\pi_0(a,x)$ of choosing action $a$ for  user $x$. This is usually not a problem is you designed the policy $\pi_0$ 
 - You should be able to compute the probability $\pi_{test}(a,x)$. This may be a bigger problem, because it usually means you need to know the full set of actions available on a user $x$.
 
-![contextual bandit datset](/assets/images/reco_problem/bandit_dataset3.png){:class="img-responsive"}
+![contextual bandit dataset]({{site.repo_name}}/assets/images/reco_problem/bandit_dataset3.png){:class="img-responsive"}
 
 (Note that in our example the list of possible actions depends on the context. This is Ok, the only restriction is that $\pi_{test}$ can only use the actions from the same list)
 

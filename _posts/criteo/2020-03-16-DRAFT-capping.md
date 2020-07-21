@@ -47,7 +47,7 @@ It's variance however depends on how different $\pi_0$ and $\pi_{test}$ are.
 
 Let's look at what happen on a few examples:
 
-![w examples](/assets/images/reco_problem/w_with_different_pi.png){:class="img-responsive"}
+![w examples]({{site.repo_name}}/assets/images/reco_problem/w_with_different_pi.png){:class="img-responsive"}
 
 We can see on those examples that:
 - when $\pi_0$ is close to $\pi_{test}$ , the ratio  $\frac{\pi_{test}(a)}{\pi_0(a)}$  is always close from 1, and variance is low.

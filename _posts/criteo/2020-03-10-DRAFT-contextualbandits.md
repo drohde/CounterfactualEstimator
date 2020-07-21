@@ -17,9 +17,9 @@ This series of posts will describe the use of the 'importance sampling estimator
 # The recommendation problem
 
 A recommender system is a system designed to propose to a user some content he may like, using the data available on this user.
-Some well known use case include choosing which movie to recommend to a user, knowing the list of previous movies he liked, or which products to advertise on a merchant website, knowing the past purchase of the user.
+Some well-known use case include choosing which movie to recommend to a user, knowing the list of previous movies he liked, or which products to advertise on a merchant website, knowing the past purchase of the user.
 
-![image-title-here](/assets/images/reco_problem/reco.png){:class="img-responsive"}
+![image-title-here]({{site.repo_name}}/assets/images/reco_problem/reco.png){:class="img-responsive"}
 
 ## Predicting next user like
  
@@ -27,7 +27,7 @@ The goal of the system is of course to recommend 'relevant' products to the user
 A widely used heuristic here is to define the 'relevant' products as the products the user is likely to like / purchase / view in the future, knowing its current history of likes / purchases /... . 
 We can learn to predict which products the user is likely to like from past data of interactions between users and products. This actually becomes a supervised learning problem.
 
-![a supervised learning problem](/assets/images/reco_problem/supervised_reco.jpg){:class="img-responsive"}
+![a supervised learning problem]({{site.repo_name}}/assets/images/reco_problem/supervised_reco.jpg){:class="img-responsive"}
 
 This supervised learning still requires some specific methods when the number of products is large. The most typical one is the 'matrix factorization' algorithm. You can find online many good description of this algorithm, for example on [wikipedia](https://en.wikipedia.org/wiki/Matrix_factorization_(recommender_systems))
 
@@ -55,7 +55,7 @@ A contextual bandit problem is a setting where at the time step $i$:
 - it select an _action_ $A_i$ for this user . Here $A$ will be the recommendation provided to the user.
 - it then receive a _reward_ $R_i$ . Here the reward will be $1$ if the user clicks on the recommendation, and $0$ otherwise. The reward $R_i$ is assumed to depend only of the query and action $X_i$ and $A_i$ at the same timestep.
 
-![contextual bandit dataset](/assets/images/reco_problem/bandit_dataset.png){:class="img-responsive"}
+![contextual bandit dataset]({{site.repo_name}}/assets/images/reco_problem/bandit_dataset.png){:class="img-responsive"}
 
 
 If you already known about Reinforcement Learning (RL), the definition of a contextual bandit should seems familiar. Actually, the only difference with RL is that we assume here that there is no dependency between the queries (or states) at different timesteps, whereas in RL the variable $X_i$ could depend on the previous state and action $X_{i-1}$ and $A_{i-1}$ . In other words, a contextual bandit is a simplified version of RL, where "episodes" are only of length 1.
