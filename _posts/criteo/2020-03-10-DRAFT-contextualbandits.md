@@ -48,11 +48,9 @@ Knowing the history of the user, retrieve the recommendation which would maximiz
 This problem can be formalized as a _contextual bandit_. 
 
 ### Contextual bandits
-<!--
-I am more used to context than query..
--->
+
 A contextual bandit problem is a setting where at the time step $i$:
-- the system observe a random _state_ (sometime also called 'query') $X_i$ . In the recommendation setting, $X_i$ will be the list of products liked by a user. The variables $X_i$ are assumed independent and identically distributed (iid)
+- the system observe a random _state_ (sometime also called 'query' or 'context') $X_i$ . In the recommendation setting, $X_i$ will be the list of products liked by a user. The variables $X_i$ are assumed independent and identically distributed (iid)
 - it select an _action_ $A_i$ for this user . Here $A$ will be the recommendation provided to the user.
 - it then receive a _reward_ $R_i$ . Here the reward will be $1$ if the user clicks on the recommendation, and $0$ otherwise. The reward $R_i$ is assumed to depend only of the query and action $X_i$ and $A_i$ at the same timestep.
 
@@ -64,6 +62,10 @@ If you already known about Reinforcement Learning (RL), the definition of a cont
 Also note that assuming the independence between a recommendation $A_i$ and the future queries / reward is one hypothesis which is not perfectly true: in practice, we may observe the same user several times, and the recommendation we make to one user at a time $i$ may impact its query / reward when we see him again later. Making this assumption however removes many complications, so it can be worthwhile to work with it.
 <!--
 I think this assumption is way safer for clicks than for sales..
+
+--
+Why ? Are you thinking about "post display" conversions ? And then what about the attributed sales ? ( aka click followed by a sale )  -- Alex
+
 -->
 ### Policy
 
@@ -83,9 +85,6 @@ Note that the optimal policy $\hat{ \pi}$ is usually deterministic. ( In each co
 
 However, it is usually a good idea to avoid fully deterministic policies. One of the main reasons is that a randomized policy allows us to keep some exploration on the different actions, and this is useful to learn how to improve the policy. It is also useful to evaluate a new policy, as we will describe in the next sections.
 
-<!--
-^ this is a fairly subtle point..  I think we use policies because they are differentiable and to satisfy the IPS formula - but deterministic makes most sense to me.  issues around uncertainty either the notion of some kind of portfolio or explore exploit are separate..   I dont know how to do it better than you have.. but maybe we can discuss...
--->
 
 ### So how is this different from supervised learning ?
 
