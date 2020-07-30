@@ -48,7 +48,9 @@ Knowing the history of the user, retrieve the recommendation which would maximiz
 This problem can be formalized as a _contextual bandit_. 
 
 ### Contextual bandits
-
+<!--
+I am more used to context than query..
+-->
 A contextual bandit problem is a setting where at the time step $i$:
 - the system observe a random _state_ (sometime also called 'query') $X_i$ . In the recommendation setting, $X_i$ will be the list of products liked by a user. The variables $X_i$ are assumed independent and identically distributed (iid)
 - it select an _action_ $A_i$ for this user . Here $A$ will be the recommendation provided to the user.
@@ -59,8 +61,10 @@ A contextual bandit problem is a setting where at the time step $i$:
 
 If you already known about Reinforcement Learning (RL), the definition of a contextual bandit should seems familiar. Actually, the only difference with RL is that we assume here that there is no dependency between the queries (or states) at different timesteps, whereas in RL the variable $X_i$ could depend on the previous state and action $X_{i-1}$ and $A_{i-1}$ . In other words, a contextual bandit is a simplified version of RL, where "episodes" are only of length 1.
 
-Also note that assuming the independence between a recommendation $A_i$ and the future queries / reward is one hypothesis which is not perfectly true: in practice, we may observe the same user several times, and the recommendation we make to one user at a time $i$ may impact its query / reward when we see him again later. Making this assumption however removes many complications, so it can be worth to work with it.
-
+Also note that assuming the independence between a recommendation $A_i$ and the future queries / reward is one hypothesis which is not perfectly true: in practice, we may observe the same user several times, and the recommendation we make to one user at a time $i$ may impact its query / reward when we see him again later. Making this assumption however removes many complications, so it can be worthwhile to work with it.
+<!--
+I think this assumption is way safer for clicks than for sales..
+-->
 ### Policy
 
 A _policy_ $\pi$ is the mathematical object which describe how we choose the recommendation when we know the query $x$.
@@ -73,11 +77,15 @@ We thus note, for a policy $\pi$,  $\pi(a,x)$ the probability of choosing action
 
 When training models on a contextual bandit problem, the goal is to find the policy which maximizes the average reward:
 
-$$ Argmax_{ \pi } \mathbb{E}_X ( \mathbb{E}_{ A \sim \pi } ( \mathbb{E}( R | A = a , X = x ))) $$
+$$\hat{\pi} = Argmax_{ \pi } \mathbb{E}_X ( \mathbb{E}_{ A \sim \pi } ( \mathbb{E}( R | A = a , X = x ))) $$
 
-Note that the optimal policy $\hat{ \pi}$ is usually deterministic. ( In each context, just choose the action which maximize the expected reward $\mathbb{E}( X \| X=x,  A=a) $
+Note that the optimal policy $\hat{ \pi}$ is usually deterministic. ( In each context, just choose the action which maximize the expected reward $\mathbb{E}( R \| X=x,  A=a) $ <!-- please check my change -->
 
-However, it is usually a good idea to avoid fully deterministic policies. One of the main reasons is that a randomized policy allows to keep some exploration on the different actions, and this is useful to learn how to improve the policy. It is also useful to evaluate a new policy, as we will describe in the next sections.
+However, it is usually a good idea to avoid fully deterministic policies. One of the main reasons is that a randomized policy allows us to keep some exploration on the different actions, and this is useful to learn how to improve the policy. It is also useful to evaluate a new policy, as we will describe in the next sections.
+
+<!--
+^ this is a fairly subtle point..  I think we use policies because they are differentiable and to satisfy the IPS formula - but deterministic makes most sense to me.  issues around uncertainty either the notion of some kind of portfolio or explore exploit are separate..   I dont know how to do it better than you have.. but maybe we can discuss...
+-->
 
 ### So how is this different from supervised learning ?
 
@@ -103,18 +111,18 @@ Let's look at a possible model:
 | query 1 |   0.52   |    0.52   |    0.52  | 
 | query 2 |   0.22   |    0.22   |   0.22   | 
 
-This model is quite obviously useless, as it does not depend on the action ! Still its RMSE would be quite low, at least lLower than the RMSE of the following model:
+This model is quite obviously useless, as it does not depend on the action ! Still its log likelihood or RMSE would be quite low, at least lLower than the loglikelihood or RMSE of the following model:
 
 |	 model 2 output   | Action a | Action b | Action c
 | query 1 |   0.35   |    0.4   |    0.35  | 
 | query 2 |   0.35   |    0.4   |    0.35  | 
 
-This model would clearly have a much worse RMSE than the previous one. But it does correctly pick action b over action a.
- the right action on query 1, and maybe also on query 2.
+This model would clearly have a much worse loglikelhood RMSE than the previous one. But it does correctly pick action b over action a.  <!-- Some thoughts...  maybe just repetition of your point..  The likelihood is high if you do a reasonable job of predicting the reward on the queries and actions you ahve seen in the past - so if you are predicting the probability of a click is close to 0.5 on action a and b then the loglikelihood will be high.  The model can predict anything at all for action C because there is no data at all on it.  The likelihood could be quite good even if the ordering of the actions is quite poor. -->
+ the right action on query 1, and maybe also on query 2.  <!-- .. I don't get the and maybe bit-->
 Let's note also that the prediction on action c does not impact at all the RMSE (because we have no data there), while it might actually perform totally differently.
   
   
 All that being said, fitting a model predicting $ \mathbb{P}( C =1 \| X = x ,A = a ) $ to the available data and choosing the best action according to this model can be a very strong baseline, especially when a bit of randomization is added to enforce some exploration. It is however not a great idea to select the model only based on classical supervised learning metrics.
 
-In the next post, I will describe how we can build better offline metrics for contextual bandits. More specifically, we can build a metric which under some mild assumptions can estimate "how many clicks we would get if we were using the _test_ model". Doesn't it sounds like the perfect metric ? 
+In the next post, I will describe how we can build better offline metrics for contextual bandits. More specifically, we can build a metric which under some mild assumptions can estimate "how many clicks we would get if we were using the _test_ policy". Doesn't it sounds like the perfect metric ? 
 
