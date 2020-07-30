@@ -111,14 +111,18 @@ Let's look at a possible model:
 | query 1 |   0.52   |    0.52   |    0.52  | 
 | query 2 |   0.22   |    0.22   |   0.22   | 
 
-This model is quite obviously useless, as it does not depend on the action ! Still its log likelihood or RMSE would be quite low, at least lLower than the loglikelihood or RMSE of the following model:
+This model would perform quite well according to metrics like 'RMSE' or 'Log Likelihood'. Indeed it does a decent job at predicting the probabilities of click.
+However, it does not help to choose an action, as its prediction does not depend on the action !
+ 
+Compare now to this other model:
 
 |	 model 2 output   | Action a | Action b | Action c
 | query 1 |   0.35   |    0.4   |    0.35  | 
 | query 2 |   0.35   |    0.4   |    0.35  | 
 
-This model would clearly have a much worse loglikelhood RMSE than the previous one. But it does correctly pick action b over action a.  <!-- Some thoughts...  maybe just repetition of your point..  The likelihood is high if you do a reasonable job of predicting the reward on the queries and actions you ahve seen in the past - so if you are predicting the probability of a click is close to 0.5 on action a and b then the loglikelihood will be high.  The model can predict anything at all for action C because there is no data at all on it.  The likelihood could be quite good even if the ordering of the actions is quite poor. -->
- the right action on query 1, and maybe also on query 2.  <!-- .. I don't get the and maybe bit-->
+This second model would perform worse according to loglikelhood and RMSE than the previous one (because the values it outputs are quite far from the actual probability of a click)
+However, it does correctly pick action b over action a on both queries, and is therefore more useful.
+
 Let's note also that the prediction on action c does not impact at all the RMSE (because we have no data there), while it might actually perform totally differently.
   
   
