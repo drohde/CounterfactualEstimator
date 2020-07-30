@@ -21,18 +21,17 @@ Some well-known use case include choosing which movie to recommend to a user, kn
 
 ![image-title-here]({{site.repo_name}}/assets/images/reco_problem/reco.png){:class="img-responsive"}
 
-## Predicting next user like
+
+## Predicting next organic view in the user session
  
 The goal of the system is of course to recommend 'relevant' products to the user. But we then need to define what is 'relevant'.
-A widely used heuristic here is to define the 'relevant' products as the products the user is likely to like / purchase / view in the future, knowing its current history of likes / purchases /... . 
-We can learn to predict which products the user is likely to like from past data of interactions between users and products. This actually becomes a supervised learning problem.
+A widely used heuristic here is to define the 'relevant' products as the products the user is likely to  view / purchase in the future, knowing the users' current history of views / purchases.  We can create logs of user histories removing the last item and then build models to predict this final item.  This actually becomes a supervised learning problem.
 
 ![a supervised learning problem]({{site.repo_name}}/assets/images/reco_problem/supervised_reco.jpg){:class="img-responsive"}
 
 This supervised learning still requires some specific methods when the number of products is large. The most typical one is the 'matrix factorization' algorithm. You can find online many good description of this algorithm, for example on [wikipedia](https://en.wikipedia.org/wiki/Matrix_factorization_(recommender_systems))
 
-Let's note that the algorithm in this family only require to have some organic data on the user, they do not use data on the interaction between the user and the recommender system itself.
-How can we leverage those data ?
+Let's note that the algorithm in this family only use the organic data on the user.  Organic data sets involve logs of user behavior i.e. associations between items that are interacted with by the same user.  Importantly these models do not user the logs of the recommender system that contain information about past recommendations and if they were interacted with or not.  This interaction (or bandit) data set is important - it tells us how well different recommendations in the past actually performed but is ignored by lots of traditional recommender systems literature.  How can we leverage bandit data sets?
 
 ## Optimizing the recommender system
 
