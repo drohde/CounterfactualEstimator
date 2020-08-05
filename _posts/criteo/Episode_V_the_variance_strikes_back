@@ -1,0 +1,22 @@
+
+Just a suggestion, but I think there is room for one more..  maybe it could also be titled the uglyness of reality..
+
+IPS is wonderful because you get an offline metric (ctr) that at least attempts to predict an online metric (ctr)
+
+but I think it would be easy to read this and think it is widely used or even widely useable..  
+
+When does IPS work?
+
+I think the answer is something like:
+pi_test(a|X) is zero outside the candidate set - and the candidate set is small.  This means it doesn't matter that pi_0(a|X) is zero for many actions.
+
+a is a single recommendation - not a banner (or a timeline)
+
+What do we do instead?
+mean rank
+recall@K
+
+It doesn't work at all for sales - because you need to consider whole timelines... yes there is a pandora's box here!!
+
+Part of the point of this is that with offline metrics you are to some extent flying blind and it isn't easy to do something about this...
+
