@@ -27,7 +27,7 @@ The surprising answer is 'Yes, we can', under some rather mild assumptions. More
 
 Let's already state those assumptions:
 - we are in a 'contextual bandit' setting. See the previous post for more details, but this mostly means that what's happening at a timestep $i$ does not depend on the other timesteps. 
-- the policy $\pi_0$ use to collect data must be stochastic and explore all the actions: for any state $x$ and action $a$, $\pi_0$ should play $a$ in state $x$ with a non $0$ probability.
+- the policy $\pi_0$ use to collect data must be stochastic and explore all the actions: for any state $x$ and action $a$, $\pi_0$ should play $a$ in state $x$ with a non $0$ probability.  <!-- I guess this is sufficient but not necessary if pi_test puts zero probability on an action so can pi_0 ..  nuance like this maybe doesn't belong here though.. -->
 
 Under those hypothesis, we can estimate the total reward we would have got when using $\pi_{test}$ with the 'Importance sampling estimator' (IPS), defined as follow:
 
@@ -66,6 +66,17 @@ We can see that the ratios $ \frac{ \pi_{test}(green) } { \pi_{0}(green) } = 4 $
 
 Note that this is correct because the choice of 'red' or 'green' were made **at random, following a known policy** $\pi_0$. It would **not** be correct anymore if the choice of red / green was depending of some other variables, and the "80% red, 20% green" was only the average on different users. In this case, such a reasoning would suffer from [Simpson's paradox](https://en.wikipedia.org/wiki/Simpson%27s_paradox)
 
+<!-- feel free to ignore these comments.. but maybe something to discuss -->
+
+<!--
+Again thinking aloud here..   does this need to be said?  What I think you are saying is that the loggin policy is actually $\pi_0(a|X,u)$ _not_ $\pi_0(a|X)$...   
+-->
+
+
+<!--
+Another subtle point..   (just me being difficult).. what if the count of impressions is not equal exactly to a fraction of 0.8 red, 0.2 green?  Should we use 0.8 0.2 or the actual fractions in the data...
+-->
+
 ### An unbiased estimator
 
 We just estimated, from the data in this example, that using the $\pi_{test}$ policy we would have got 1450 clicks. Does it means that we would observe _exactly_ 1450 clicks if we had collected the data with $\pi_{test}$ ? Certainly not. This number of clicks with the test policy is a random variable, and we have only an estimator of its average.
@@ -75,6 +86,8 @@ if we replayed infinitely many times the experiment we just did, which is:
 - compute the estimator $ Clicks_{green} \times \frac{ \pi_{test}(green) } { \pi_{0}(green) } +  Clicks_{red} \times \frac{ \pi_{test}(red) } { \pi_{0}(red) }$ on those data
 
 We would get, _on average on those experiments_,  the average number of clicks we would get with $\pi_{test}$
+
+<!--I love how carefully you explain this!! ^^ --->
 
 ## Back to the general problem
 
@@ -89,6 +102,10 @@ To understand that, let's first note that if we decrease the number of users in 
 In particular, it is unbiased even when there is a single user !
  
 So in the general case, we get on each user an unbiased (but high variance) estimator of what would happen when using test policy for this user. By summing those estimator on all users, it is still unbiased (for the population of users), and the relative variance (hopefully, more on that later) goes down. 
+
+<!--
+I am not sure why we are talking about Simpson's paradox here..
+-->
 
 ### Proof of unbiasedness
 
@@ -115,6 +132,8 @@ Let's emphasis what we know in this formula:
 #### IPS estimator
 
 Let's then notice that the value $$ ips := \frac{1}{n} \times \sum_\limits{ i \in {1...n} } w(a_i,x_i) \times  r_i $$ computed on our dataset is a sample of the random variable $$ IPS := \sum_\limits{ i \in {1...n} }  w(A_i,X_i) \times R_i $$
+
+<!--Maybe it is worth highlighting that ips is an offline measure of reward (not easy to get).  DR ^^ TODO check the above rendered ^^-->
 
 What we would like to prove now is that $IPS$ is an unbiased estimator of $$ \mathbb{E}_{\pi_{test}}(R) $$, in other words that $$ \mathbb{E}(IPS) = \mathbb{E}_{\pi_{test}}(R) $$
 
@@ -148,7 +167,7 @@ And we recognize here the formula for $$\mathbb{E}_{\pi_{test}}(R)$$ that we wro
 There are several requirements to be able to compute this estimator on your dataset:
 - The data must be collected with a randomized policy $\pi_0$
 - You should log, or be able to recompute the probability  $\pi_0(a,x)$ of choosing action $a$ for  user $x$. This is usually not a problem is you designed the policy $\pi_0$ 
-- You should be able to compute the probability $\pi_{test}(a,x)$. This may be a bigger problem, because it usually means you need to know the full set of actions available on a user $x$.
+- You should be able to compute the probability $\pi_{test}(a,x)$. This may be a bigger problem, because it usually means you need to know the full set of actions available on a user $x$.  <!-- why is this a problem? you create pi_test(a,x).. also should it be pi_test(a|x) -->
 
 ![contextual bandit dataset]({{site.repo_name}}/assets/images/reco_problem/bandit_dataset3.png){:class="img-responsive"}
 
@@ -162,6 +181,10 @@ Randomized does not mean it should be uniformly random ! It is totally Ok to hav
 And randomizing a little the policy may actually be a good idea, even if you do not care about conterfactual estimators:
 - It will bring some diversity to the users. If you make several times a recommendation to the same user, randomizing if a very simple but efficient way to avoid showing the same user always the same crappy recommendation.
 - And it will bring diversity to the models trained on the collected dataset, enabling some exploration of new actions.
+
+<!--
+purely discussion..  how many actions in practice is it meaningful to have reasonable support over pi_0..   I suggest a tiny fraction in recommnedation settings.. 
+-->
 
 ## So we have an unbiased estimator. But is it low variance ?
 
