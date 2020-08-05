@@ -25,6 +25,7 @@ and proved it is an unbiased estimator of the number of clicks when applying pol
 
 - $IPS$ is an average on $n$ independent samples of $W \times R$ , where we noted $W := w(A,X)$; so $Var(IPS) = \frac{1}{n} \times Var( W \times R ) $ 
 - while there is no simple formula for $Var( W \times R)$ , we may approximate it by assuming that $R$ and $w(A,X)$ are independent. (This is wrong, but should give us the correct magnitude)
+<!-- interesting comment..  let's discuss!! -->
 
 We can then write:
 
@@ -56,6 +57,8 @@ We can see on those examples that:
 The worst case happens when $\pi_{test}$ puts all the mass on the action less likely according to $\pi_0$.
 The $w$ is then either $\frac{1}{ min_a(\pi_0(a)}$ , with probability $ min_a(\pi_0(a)$ , or 0, and the variance is   $\frac{1}{ min_a(\pi_0(a)}$ -1 $
 
+<!-- pi_test degenerate seems to me _the_ classic case -->
+
 In practice, it is difficult to avoid having any actions with very low propensity. Indeed:
  - assigning significant propensity to some actions which are known (or strongly suspected) to perform badly would degrade the whole system performances
  - when he action space is large, it is just not possible to assign a large probability to every action.
@@ -78,6 +81,8 @@ What would we observe in such a case ?
 
 This "hidden" variance is actually behaving like a bias !
 
+<!-- I love this comment!! -->
+
 Let's also note that in the limit case, when the probability of an action following $\pi_0$ becomes exactly 0, the variance becomes low, but the estimator is now biased.
 
 ### Capped importance weight
@@ -93,6 +98,10 @@ $$ capped IPS := \frac{1}{n} \times  \sum_\limits{ i \in {1...n} } \overline{W_i
 with:  $ \overline{W_i} $ defined either as:
  -  $ \overline{W_i} := min( W_i , c ) $     (capped weight)
  -  or $ \overline{W_i} :=  W_i \times \mathbb{1}_{ W_i < c  } $    (filtering out large weights)
+
+<!-- I am more used to the max() formulation than the filter -->
+<!-- formulation.. let me think about this.. is the filter formulation -->
+<!-- really common?-->
 
 and $c$ is the capping threshold.
 
@@ -112,6 +121,8 @@ To summarize:
 
 Ideally, we would like a low variance unbiased estimator for all policies. But is this possible ?
 
+<!-- it is interesting to discuss that capping makes you cling to -->
+<!-- pi_test - which might be good if pi_test is good -->
 
 ### No unbiased low variance estimator when $\pi_{test}$ is far from $\pi_0$
 
