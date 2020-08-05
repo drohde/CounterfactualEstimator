@@ -20,7 +20,7 @@ and introduce the "pointwise capped normalized" estimator defined in [Offline  A
 # Two ideas to go further
 
 We observed that we cannot get a low variance unbiased estimator for what happens when applying $\pi_{test}$, because we have not enough data on some of the actions it selects. So what we do ? We would like to propose two view points here:
- - we can make an hypothesis on the average reward of those unobserved actions
+ - we can make a hypothesis on the average reward of those unobserved actions
  - or we can replace $\pi_{test}$ by an approximate policy $\pi_{test'}$ which should be as similar to $\pi_{test}$ as possible while staying close enough from $\pi_0$ to keep low importance weights.
  
 Interestingly enough, both ideas may lead to the same estimator.
