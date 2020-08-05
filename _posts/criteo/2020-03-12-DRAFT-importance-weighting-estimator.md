@@ -65,12 +65,29 @@ We can see that the ratios $ \frac{ \pi_{test}(green) } { \pi_{0}(green) } = 4 $
 
 
 Note that this is correct because the choice of 'red' or 'green' were made **at random, following a known policy** $\pi_0$. It would **not** be correct anymore if the choice of red / green was depending of some other variables, and the "80% red, 20% green" was only the average on different users. In this case, such a reasoning would suffer from [Simpson's paradox](https://en.wikipedia.org/wiki/Simpson%27s_paradox)
-
 <!-- feel free to ignore these comments.. but maybe something to discuss -->
 
 <!--
-Again thinking aloud here..   does this need to be said?  What I think you are saying is that the loggin policy is actually $\pi_0(a|X,u)$ _not_ $\pi_0(a|X)$...   
+I am `thinking aloud' here because I am not sure why you mention Simpson's paradox.
+
+To me Simpson's paradox is about the average treatment effect - or as we might say the bandit-best-of - although usually we don't care about this we want the personalised or average treatment effect.
+
+An incorrect way to compute the bandit best of is to simply take all the data and divide all the clicks by the impressions for all actions.  i.e. it is incorrect to compute P(click|action) = \int P(click,X|action) dX - although in practice you don't estimate the joint and marginalize you just regress P(click|action) - it gives the wrong result here though...
+
+The correct way to do it is to compute:
+P(click|action) = \int P(click|action,X)P(X) dX
+
+Simpson's paraodox (to me) is which of the following should you use:
+(1) P(click|action) = \int P(click,X|action) dX 
+(2) P(click|action) = \int P(click|action,X)P(X) dX
+
+For us it is (2) but in a setting where X is caused by action (e.g. X is a sale) then (1) is correct.
+
+... Now I think what you are getting at (and is really interesting) is that it isn't necessary to use X - any "balancing score will do" and pi_0(X) is a valid balancing score.  See Rosenbaum and Rubin 1983
+
+now a puzzle for me at least is this doesn't AFAICT take you all the way to the IPS formula..   instead it says instead of using X in the model you can use e(X) which is a vector of the IPS for each action...
 -->
+
 
 
 <!--
@@ -104,7 +121,7 @@ In particular, it is unbiased even when there is a single user !
 So in the general case, we get on each user an unbiased (but high variance) estimator of what would happen when using test policy for this user. By summing those estimator on all users, it is still unbiased (for the population of users), and the relative variance (hopefully, more on that later) goes down. 
 
 <!--
-I am not sure why we are talking about Simpson's paradox here..
+I am not sure why we are talking about Simpson's paradox here.. see comment above and let's discuss...
 -->
 
 ### Proof of unbiasedness
