@@ -83,6 +83,10 @@ This "hidden" variance is actually behaving like a bias !
 
 <!-- I love this comment!! -->
 
+<!-- 
+http://jmlr.org/papers/volume14/bottou13a/bottou13a.pdf Section 4.4 might be relevant here or elsewhere
+-->
+
 Let's also note that in the limit case, when the probability of an action following $\pi_0$ becomes exactly 0, the variance becomes low, but the estimator is now biased.
 
 ### Capped importance weight
