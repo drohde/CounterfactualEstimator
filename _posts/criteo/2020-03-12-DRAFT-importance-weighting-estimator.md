@@ -92,7 +92,7 @@ We would get, _on average on those experiments_,  the average number of clicks w
 ## Back to the general problem
 
 Previous example suggests an interpretation for the weights $\frac{ \pi_{test}(x_i,a_i) }{ \pi_0(x_i,a_i) }$
-They represent _'how more likely' is action_ $a$ with $\pi_{test}$ than with $\pi_0$ in the context $x$. 
+They represent _'how much more likely' is action_ $a$ with $\pi_{test}$ than with $\pi_0$ in the context $x$. 
 We will name this ratio the 'importance weight' and note it $w$:
 
 $$ w_i := w(a_i,x_i) := \frac{ \pi_{test}(x_i,a_i) }{ \pi_0(x_i,a_i) } $$
