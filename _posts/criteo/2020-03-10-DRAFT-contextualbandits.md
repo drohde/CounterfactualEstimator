@@ -31,7 +31,7 @@ A widely used heuristic here is to define the 'relevant' products as the product
 
 This supervised learning still requires some specific methods when the number of products is large. The most typical one is the 'matrix factorization' algorithm. You can find online many good description of this algorithm, for example on [wikipedia](https://en.wikipedia.org/wiki/Matrix_factorization_(recommender_systems))
 
-Let's note that the algorithm in this family only use the organic data on the user.  Organic data sets involve logs of user behavior i.e. associations between items that are interacted with by the same user.  Importantly these models do not user the logs of the recommender system that contain information about past recommendations and if they were interacted with or not.  This interaction (or bandit) data set is important - it tells us how well different recommendations in the past actually performed but is ignored by lots of traditional recommender systems literature.  How can we leverage bandit data sets?
+Let's note that the algorithm in this family only use the organic data on the user.  Organic data sets involve logs of user behavior i.e. associations between items that are interacted with by the same user.  Importantly these models do not use the logs of the recommender system (that contain information about past recommendations and if they were successful or not).  This interaction (or bandit) data set is important - it tells us how well different recommendations in the past actually performed, but is ignored by lots of traditional recommender systems literature.  How can we leverage bandit data sets?
 
 ## Optimizing the recommender system
 
