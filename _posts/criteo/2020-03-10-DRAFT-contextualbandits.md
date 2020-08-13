@@ -31,7 +31,7 @@ A widely used heuristic here is to define the 'relevant' products as the product
 
 This supervised learning still requires some specific methods when the number of products is large. The most typical one is the 'matrix factorization' algorithm. You can find online many good description of this algorithm, for example on [wikipedia](https://en.wikipedia.org/wiki/Matrix_factorization_(recommender_systems))
 
-Let's note that the algorithm in this family only use the organic data on the user.  Organic data sets involve logs of user behavior i.e. associations between items that are interacted with by the same user.  Importantly these models do not use the logs of the recommender system (that contain information about past recommendations and if they were successful or not).  This interaction (or bandit) data set is important - it tells us how well different recommendations in the past actually performed, but is ignored by lots of traditional recommender systems literature.  How can we leverage bandit data sets?
+Let's note that the algorithm in this family only use the organic data on the user.  Organic data sets involve logs of user behavior i.e. associations between items that are interacted with by the same user.  Importantly these models do not use the logs of the recommender system (that contain information about past recommendations and if they were successful or not).  This interaction (or bandit) data set is important - it tells us how well different recommendations in the past actually performed, but it is ignored by lots of traditional recommender systems literature.  How can we leverage bandit data set?
 
 ## Optimizing the recommender system
 
@@ -60,13 +60,7 @@ A contextual bandit problem is a setting where at the time step $i$:
 If you already known about Reinforcement Learning (RL), the definition of a contextual bandit should seems familiar. Actually, the only difference with RL is that we assume here that there is no dependency between the queries (or states) at different timesteps, whereas in RL the variable $X_i$ could depend on the previous state and action $X_{i-1}$ and $A_{i-1}$ . In other words, a contextual bandit is a simplified version of RL, where "episodes" are only of length 1.
 
 Also note that assuming the independence between a recommendation $A_i$ and the future queries / reward is one hypothesis which is not perfectly true: in practice, we may observe the same user several times, and the recommendation we make to one user at a time $i$ may impact its query / reward when we see him again later. Making this assumption however removes many complications, so it can be worthwhile to work with it.
-<!--
-I think this assumption is way safer for clicks than for sales..
 
---
-Why ? Are you thinking about "post display" conversions ? And then what about the attributed sales ? ( aka click followed by a sale )  -- Alex
-
--->
 ### Policy
 
 A _policy_ $\pi$ is the mathematical object which describe how we choose the recommendation when we know the query $x$.
@@ -110,7 +104,7 @@ Let's look at a possible model:
 | query 1 |   0.52   |    0.52   |    0.52  | 
 | query 2 |   0.22   |    0.22   |   0.22   | 
 
-This model would perform quite well according to metrics like 'RMSE' or 'Log Likelihood'. Indeed it does a decent job at predicting the probabilities of click.
+This model would perform quite well according to metrics like 'RMSE'. Indeed it does a decent job at predicting the probabilities of click.
 However, it does not help to choose an action, as its prediction does not depend on the action !
  
 Compare now to this other model:
@@ -119,7 +113,7 @@ Compare now to this other model:
 | query 1 |   0.35   |    0.4   |    0.35  | 
 | query 2 |   0.35   |    0.4   |    0.35  | 
 
-This second model would perform worse according to loglikelhood and RMSE than the previous one (because the values it outputs are quite far from the actual probability of a click)
+This second model would perform worse according RMSE than the previous one (because the values it outputs are quite far from the actual probability of a click)
 However, it does correctly pick action b over action a on both queries, and is therefore more useful.
 
 Let's note also that the prediction on action c does not impact at all the RMSE (because we have no data there), while it might actually perform totally differently.
@@ -127,5 +121,5 @@ Let's note also that the prediction on action c does not impact at all the RMSE 
   
 All that being said, fitting a model predicting $ \mathbb{P}( C =1 \| X = x ,A = a ) $ to the available data and choosing the best action according to this model can be a very strong baseline, especially when a bit of randomization is added to enforce some exploration. It is however not a great idea to select the model only based on classical supervised learning metrics.
 
-In the next post, I will describe how we can build better offline metrics for contextual bandits. More specifically, we can build a metric which under some mild assumptions can estimate "how many clicks we would get if we were using the _test_ policy". Doesn't it sounds like the perfect metric ? 
+In the next post, I will describe how we can build better offline metrics for contextual bandits. More specifically, we can build a metric which under some mild assumptions can estimate "how many clicks we would get if we were using the _test_ policy". Doesn't it sounds like the perfect metric? 
 
