@@ -27,7 +27,7 @@ The surprising answer is 'Yes, we can', under some rather mild assumptions. More
 
 Let's already state those assumptions:
 - we are in a 'contextual bandit' setting. See the previous post for more details, but this mostly means that what's happening at a timestep $i$ does not depend on the other timesteps. 
-- the policy $\pi_0$ use to collect data must be stochastic and explore all the actions: for any state $x$ and action $a$, $\pi_0$ should play $a$ in state $x$ with a non $0$ probability.
+- the policy $\pi_0$ used to collect data must be stochastic and explore all the actions: for any state $x$ and action $a$, $\pi_0$ should play $a$ in state $x$ with a non $0$ probability.
 
 Under those hypothesis, we can estimate the total reward we would have got when using $\pi_{test}$ with the 'Importance sampling estimator' (IPS), defined as follow:
 
@@ -79,7 +79,7 @@ We would get, _on average on those experiments_,  the average number of clicks w
 ## Back to the general problem
 
 Previous example suggests an interpretation for the weights $\frac{ \pi_{test}(x_i,a_i) }{ \pi_0(x_i,a_i) }$
-They represent _'how more likely' is action_ $a$ with $\pi_{test}$ than with $\pi_0$ in the context $x$. 
+They represent _'how much more likely' is action_ $a$ with $\pi_{test}$ than with $\pi_0$ in the context $x$. 
 We will name this ratio the 'importance weight' and note it $w$:
 
 $$ w_i := w(a_i,x_i) := \frac{ \pi_{test}(x_i,a_i) }{ \pi_0(x_i,a_i) } $$
@@ -147,7 +147,7 @@ And we recognize here the formula for $$\mathbb{E}_{\pi_{test}}(R)$$ that we wro
 
 There are several requirements to be able to compute this estimator on your dataset:
 - The data must be collected with a randomized policy $\pi_0$
-- You should log, or be able to recompute the probability  $\pi_0(a,x)$ of choosing action $a$ for  user $x$. This is usually not a problem is you designed the policy $\pi_0$ 
+- You should log, or be able to recompute the probability  $\pi_0(a,x)$ of choosing action $a$ for  user $x$. This is usually not a problem as you designed the policy $\pi_0$ 
 - You should be able to compute the probability $\pi_{test}(a,x)$. This may be a bigger problem, because it usually means you need to know the full set of actions available on a user $x$.
 
 ![contextual bandit dataset]({{site.repo_name}}/assets/images/reco_problem/bandit_dataset3.png){:class="img-responsive"}
