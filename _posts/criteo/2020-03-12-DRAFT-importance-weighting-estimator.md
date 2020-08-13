@@ -85,8 +85,8 @@ We will name this ratio the 'importance weight' and note it $w$:
 $$ w_i := w(a_i,x_i) := \frac{ \pi_{test}(x_i,a_i) }{ \pi_0(x_i,a_i) } $$
 
 In the general case of course, the users may be all different, and the policy $\pi_0$ is allowed to depend on the user. Why don't we suffer from a Simpson's like paradox ?
-To understand that, let's first note that if we decrease the number of users in previous experiment, we get of course a worse estimator because the variance increases, but the it still remains unbiased.
-In particular, it is unbiased even when there is a single user !
+To understand that, let's first note that if we decrease the number of users in previous experiment, we get of course a worse estimator because the variance increases, but it still remains unbiased.
+In particular, it is unbiased even when there is a single user!
  
 So in the general case, we get on each user an unbiased (but high variance) estimator of what would happen when using test policy for this user. By summing those estimator on all users, it is still unbiased (for the population of users), and the relative variance (hopefully, more on that later) goes down. 
 
