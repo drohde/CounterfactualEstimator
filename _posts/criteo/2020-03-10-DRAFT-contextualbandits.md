@@ -24,7 +24,7 @@ Some well-known use case include choosing which movie to recommend to a user, kn
 
 ## Predicting next organic view in the user session
  
-The goal of the system is of course to recommend 'relevant' products to the user. But we then need to define what is 'relevant'.
+The goal of the system is of course to recommend 'relevant' products to the user, so we need to define what is 'relevant'.
 A widely used heuristic here is to define the 'relevant' products as the products the user is likely to  view / purchase in the future, knowing the users' current history of views / purchases.  We can create logs of user histories removing the last item and then build models to predict this final item.  This actually becomes a supervised learning problem.
 
 ![a supervised learning problem]({{site.repo_name}}/assets/images/reco_problem/supervised_reco.jpg){:class="img-responsive"}
