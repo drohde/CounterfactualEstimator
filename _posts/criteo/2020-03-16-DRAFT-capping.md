@@ -119,5 +119,5 @@ Unfortunately, the answer is No, unless we make some additional hypothesis.
 
 Indeed, having  some  large  importance  weights  means  that  the  test  policy  takes  some  actions  which  were  very uncommon under the logging policy.  We just did not collect enough data on those actions to get any low variance estimate of what would happen when they are chosen.
 
-In the next post, we will propose some possible additional hypothesis which seemed quite reasonable on our data at Criteo, and allowed to build some usable estimator for policy a bit further from $\pi_0$ (well, still not *too* far, there is just no magic for that)
+In the next post, we will propose some possible additional hypothesis which seemed quite reasonable on our data at Criteo, and allowed to build some usable estimators for policies that are a bit further from $\pi_0$ (well, still not *too* far, there is just no magic for that)
 
