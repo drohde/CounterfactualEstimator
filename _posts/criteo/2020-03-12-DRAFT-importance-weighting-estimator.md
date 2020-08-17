@@ -29,7 +29,7 @@ Let's already state those assumptions:
 - we are in a 'contextual bandit' setting. See the previous post for more details, but this mostly means that what's happening at a timestep $i$ does not depend on the other timesteps. 
 - the policy $\pi_0$ used to collect data must be stochastic and explore all the actions: for any state $x$ and action $a$, $\pi_0$ should play $a$ in state $x$ with a non $0$ probability.
 
-Under those hypothesis, we can estimate the total reward we would have got when using $\pi_{test}$ with the 'Importance sampling estimator' (IPS), defined as follow:
+Under those hypothesis, we can estimate the total reward we would have got when using $\pi_{test}$ with the 'Importance Sampling Estimator' (IPS), defined as follow:
 
 $$ ips :=  \frac{1}{n} \times \sum_\limits{ i \in {1...n} } \frac{ \pi_{test}(x_i,a_i) }{ \pi_0(x_i,a_i) } r_i $$
 
@@ -85,7 +85,7 @@ We will name this ratio the 'importance weight' and note it $w$:
 $$ w_i := w(a_i,x_i) := \frac{ \pi_{test}(x_i,a_i) }{ \pi_0(x_i,a_i) } $$
 
 In the general case of course, the users may be all different, and the policy $\pi_0$ is allowed to depend on the user. Why don't we suffer from a Simpson's like paradox ?
-To understand that, let's first note that if we decrease the number of users in previous experiment, we get of course a worse estimator because the variance increases, but it still remains unbiased.
+To understand that, let's first note that if we decrease the number of users in the previous experiment, we get (of course) a worse estimator because the variance increases, but it still remains unbiased.
 In particular, it is unbiased even when there is a single user!
  
 So in the general case, we get on each user an unbiased (but high variance) estimator of what would happen when using test policy for this user. By summing those estimator on all users, it is still unbiased (for the population of users), and the relative variance (hopefully, more on that later) goes down. 
